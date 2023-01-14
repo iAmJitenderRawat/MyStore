@@ -22,6 +22,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { SubNav } from "../components/SubNav";
+import { Link } from "react-router-dom";
 // import { Loading } from "./Loading";
 
 function Rating({ rating, numReviews }) {
@@ -79,96 +80,102 @@ export function Home() {
           {products ? (
             products.map((data) => {
               return (
-                <GridItem
-                  key={data.id}
-                  bg={useColorModeValue("white", "gray.800")}
-                  maxW="sm"
-                  borderWidth="1px"
-                  rounded="lg"
-                  shadow="lg"
-                  position="relative"
-                >
-                  {true && (
-                    <Circle
-                      size="10px"
-                      position="absolute"
-                      top={2}
-                      right={2}
-                      bg="red.200"
-                    />
-                  )}
-
-                  <Center p={8}>
-                    <Image
-                      className="image"
-                      src={data.image}
-                      alt={`Picture of ${data.title}`}
-                      roundedTop="lg"
-                    />
-                  </Center>
-
-                  <Box p="6">
-                    <Box
-                      d="flex"
-                      alignItems="baseline"
-                      position="absolute"
-                      top={1}
-                      left={1}
-                    >
-                      {data.rating.count < 220 && (
-                        <Badge
-                          zIndex={1}
-                          rounded="full"
-                          px="2"
-                          fontSize="0.8em"
-                          colorScheme="red"
-                        >
-                          New
-                        </Badge>
-                      )}
-                    </Box>
-
-                    <Box
-                      fontSize="2xl"
-                      fontWeight="semibold"
-                      as="h4"
-                      lineHeight="tight"
-                    >
-                      {data.title.slice(0, 20)}...
-                    </Box>
-
-                    <Flex justifyContent="space-between" alignContent="center">
-                      <Rating
-                        rating={data.rating.rate}
-                        numReviews={data.rating.count}
+                <Link to={`/products/${data.id}`}>
+                  <GridItem
+                    key={data.id}
+                    bg={useColorModeValue("white", "gray.800")}
+                    maxW="sm"
+                    borderWidth="1px"
+                    rounded="lg"
+                    shadow="lg"
+                    position="relative"
+                  >
+                    {true && (
+                      <Circle
+                        size="10px"
+                        position="absolute"
+                        top={2}
+                        right={2}
+                        bg="red.200"
                       />
+                    )}
+
+                    <Center p={8}>
+                      <Image
+                        className="image"
+                        src={data.image}
+                        alt={`Picture of ${data.title}`}
+                        roundedTop="lg"
+                      />
+                    </Center>
+
+                    <Box p="6">
+                      <Box
+                        d="flex"
+                        alignItems="baseline"
+                        position="absolute"
+                        top={1}
+                        left={1}
+                      >
+                        {data.rating.count < 220 && (
+                          <Badge
+                            zIndex={1}
+                            rounded="full"
+                            px="2"
+                            fontSize="0.8em"
+                            colorScheme="red"
+                          >
+                            New
+                          </Badge>
+                        )}
+                      </Box>
+
                       <Box
                         fontSize="2xl"
-                        color={useColorModeValue("gray.800", "white")}
+                        fontWeight="semibold"
+                        as="h4"
+                        lineHeight="tight"
                       >
-                        <Box as="span" color={"gray.600"} fontSize="lg">
-                          $
-                        </Box>
-                        {data.price.toFixed(2)}
+                        {data.title.slice(0, 20)}...
                       </Box>
-                    </Flex>
-                    <Center>
-                      <Tooltip
-                        label="Add to cart"
-                        bg="white"
-                        placement={"top"}
-                        color={"gray.800"}
-                        fontSize={"1.2em"}
+
+                      <Flex
+                        justifyContent="space-between"
+                        alignContent="center"
                       >
-                        <chakra.a href={"#"} display={"flex"}>
-                          <Button mt={5} bg={"red.400"}>
-                            <Icon as={FiShoppingCart} h={7} w={7} /> Add To Cart
-                          </Button>
-                        </chakra.a>
-                      </Tooltip>
-                    </Center>
-                  </Box>
-                </GridItem>
+                        <Rating
+                          rating={data.rating.rate}
+                          numReviews={data.rating.count}
+                        />
+                        <Box
+                          fontSize="2xl"
+                          color={useColorModeValue("gray.800", "white")}
+                        >
+                          <Box as="span" color={"gray.600"} fontSize="lg">
+                            $
+                          </Box>
+                          {data.price.toFixed(2)}
+                        </Box>
+                      </Flex>
+                      <Center>
+                        <Tooltip
+                          label="Add to cart"
+                          bg="white"
+                          placement={"top"}
+                          color={"gray.800"}
+                          fontSize={"1.2em"}
+                        >
+                          <chakra.a href={"#"} display={"flex"}>
+                            <Button mt={5} bg={"red.400"}>
+                              <Icon as={FiShoppingCart} h={7} w={7} /> Add To
+                              Cart
+                            </Button>
+                          </chakra.a>
+                        </Tooltip>
+                      </Center>
+                    </Box>
+                  </GridItem>
+                </Link>
               );
             })
           ) : (
