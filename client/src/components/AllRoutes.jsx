@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { Cart } from '../pages/Cart';
 import { Category } from '../pages/Category';
 import { Home } from '../pages/Home'
 import { SignIn } from '../pages/SignIn';
@@ -14,6 +15,7 @@ export function AllRoutes() {
       <Route path="/signUp" element={<SignUp />} />
       <Route path="/signIn" element={<SignIn />} />
       <Route path="/products/:id" element={<SingleProduct />} />
+      <Route path="/cart" element={<Cart />} />
     </Routes>
   );
 }

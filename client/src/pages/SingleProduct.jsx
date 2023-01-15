@@ -78,6 +78,7 @@ export function SingleProduct() {
         >
           {product.id == id ? (
             <Flex
+              w={"100%"}
               direction={{
                 xl: "row",
                 lg: "row",
@@ -96,15 +97,34 @@ export function SingleProduct() {
                 />
               )}
 
-              <Center p={8}>
+              <Center
+                p={6}
+                w={{
+                  xl: "50%",
+                  lg: "50%",
+                  md: "50%",
+                  sm: "100%",
+                  base: "100%",
+                }}
+              >
                 <Image
+                  w={"50%"}
                   src={product.image}
                   alt={`Picture of ${product.title}`}
                   rounded="lg"
                 />
               </Center>
 
-              <Box p="6">
+              <Box
+                p="6"
+                w={{
+                  xl: "50%",
+                  lg: "50%",
+                  md: "50%",
+                  sm: "100%",
+                  base: "100%",
+                }}
+              >
                 <Box
                   d="flex"
                   alignItems="baseline"
@@ -136,7 +156,7 @@ export function SingleProduct() {
 
                 <Box
                   fontSize="xl"
-                  fontWeight="semibold"
+                  fontWeight="normal"
                   as="h4"
                   lineHeight="tight"
                 >

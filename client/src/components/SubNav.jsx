@@ -49,7 +49,7 @@ export function SubNav() {
           <Text>Sort By Price</Text>
           <Select
             placeholder="Select option"
-            value={sortPrice}
+            sortPrice={sortPrice}
             onChange={handlePrice}
           >
             <option value="asc">Ascending</option>

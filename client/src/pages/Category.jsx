@@ -21,7 +21,7 @@ import { FiShoppingCart } from "react-icons/fi";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { SubNav } from "../components/SubNav";
 // import { Loading } from "./Loading";
 
@@ -98,15 +98,16 @@ export function Category() {
                     bg="red.200"
                   />
                 )}
-
-                <Center>
-                  <Image
-                    className="image"
-                    src={data.image}
-                    alt={`Picture of ${data.title}`}
-                    roundedTop="lg"
-                  />
-                </Center>
+                <Link to={`/products/${data.id}`}>
+                  <Center>
+                    <Image
+                      className="image"
+                      src={data.image}
+                      alt={`Picture of ${data.title}`}
+                      roundedTop="lg"
+                    />
+                  </Center>
+                </Link>
 
                 <Box p="6">
                   <Box

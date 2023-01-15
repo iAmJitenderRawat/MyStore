@@ -114,7 +114,9 @@ export function Navbar() {
             )}
           </Box>
           <Box>
-            <AiOutlineShoppingCart size={30} />
+            <Link to={"/cart"}>
+              <AiOutlineShoppingCart size={30} />
+            </Link>
           </Box>
           <Button onClick={toggleColorMode} bg={bg}>
             {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
