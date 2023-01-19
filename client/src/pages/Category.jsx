@@ -15,55 +15,57 @@ import {
   Button,
   Text,
   Select,
+  Heading,
+  Spinner,
 } from "@chakra-ui/react";
 import { BsStar, BsStarFill, BsStarHalf } from "react-icons/bs";
 import { FiShoppingCart } from "react-icons/fi";
-import { useState } from "react";
 import { useEffect } from "react";
-import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { SubNav } from "../components/SubNav";
-// import { Loading } from "./Loading";
-
-function Rating({ rating, numReviews }) {
-  return (
-    <Flex alignItems="center">
-      {Array(5)
-        .fill("")
-        .map((_, i) => {
-          const roundedRating = Math.round(rating * 2) / 2;
-          if (roundedRating - i >= 1) {
-            return (
-              <BsStarFill
-                key={i}
-                style={{ marginLeft: "1" }}
-                color={i < rating ? "teal.500" : "gray.300"}
-              />
-            );
-          }
-          if (roundedRating - i === 0.5) {
-            return <BsStarHalf key={i} style={{ marginLeft: "1" }} />;
-          }
-          return <BsStar key={i} style={{ marginLeft: "1" }} />;
-        })}
-      <Box as="span" ml="2" color="gray.600" fontSize="sm">
-        {numReviews} review{numReviews > 1 && "s"}
-      </Box>
-    </Flex>
-  );
-}
+import { useDispatch, useSelector } from "react-redux";
+import { add } from "../slice/cartSlice";
+import { getCategoriesProducts, STATUSES } from "../slice/categoryProductsSlice";
+import { Rating } from "../components/Rating";
 
 export function Category() {
-  const [products, setProducts] = useState([]);
-  const { type } = useParams();
-  console.log(type);
+  const {data: products, status} = useSelector((state) => state.categoryProducts);
+  const { page } = useParams();
+  console.log(page);
+  const dispatch = useDispatch();
   useEffect(() => {
-    axios
-      .get(`https://fakestoreapi.com/products/category/${type}`)
-      .then((res) => setProducts(res.data));
-  }, [type]);
+    dispatch(getCategoriesProducts(page));
+  }, [dispatch, page]);
 
   console.log(products);
+
+  const handleAddToCart = (data) => {
+    dispatch(add(data));
+    toast({
+      title: "Item added",
+      status: "success",
+      duration: 1000,
+      isClosable: true,
+    });
+  };
+
+    if (status === STATUSES.LOADING) {
+      return (
+        <Heading textAlign={"center"} p={"20px 20%"}>
+          <Spinner boxSize={"xl"} />
+          Loading....
+        </Heading>
+      );
+    }
+
+    if (status === STATUSES.ERROR) {
+      return (
+        <Box>
+          <Heading>ERROR 404</Heading>
+          <Heading>Something went wrong!</Heading>
+        </Box>
+      );
+    }
 
   return (
     <>
@@ -99,10 +101,10 @@ export function Category() {
                   />
                 )}
                 <Link to={`/products/${data.id}`}>
-                  <Center>
+                  <Center p={8}>
                     <Image
                       className="image"
-                      src={data.image}
+                      src={data.thumbnail}
                       alt={`Picture of ${data.title}`}
                       roundedTop="lg"
                     />
@@ -113,20 +115,18 @@ export function Category() {
                   <Box
                     d="flex"
                     alignItems="baseline"
-                    position="absolute"
-                    top={2}
-                    left={2}
                   >
-                    {data.rating.count < 120 && (
-                      <Badge
-                        rounded="full"
-                        px="2"
-                        fontSize="0.8em"
-                        colorScheme="red"
-                      >
-                        New
-                      </Badge>
-                    )}
+                    <Badge
+                      position="absolute"
+                      top={1}
+                      left={1}
+                      rounded="full"
+                      px="2"
+                      fontSize="0.8em"
+                      colorScheme="red"
+                    >
+                      {data.discountPercentage}% OFF
+                    </Badge>
                   </Box>
 
                   <Box
@@ -135,13 +135,13 @@ export function Category() {
                     as="h4"
                     lineHeight="tight"
                   >
-                    {data.title.slice(0, 20)}...
+                    {data.title}
                   </Box>
 
                   <Flex justifyContent="space-between" alignContent="center">
                     <Rating
-                      rating={data.rating.rate}
-                      numReviews={data.rating.count}
+                      rating={data.rating}
+                      numReviews={data.stock}
                     />
                     <Box
                       fontSize="2xl"
@@ -161,8 +161,12 @@ export function Category() {
                       color={"gray.800"}
                       fontSize={"1.2em"}
                     >
-                      <chakra.a href={"#"} display={"flex"}>
-                        <Button mt={5} bg={"red.400"}>
+                      <chakra.a display={"flex"}>
+                        <Button
+                          mt={5}
+                          bg={"red.400"}
+                          onClick={() => handleAddToCart(data)}
+                        >
                           <Icon
                             as={FiShoppingCart}
                             h={7}

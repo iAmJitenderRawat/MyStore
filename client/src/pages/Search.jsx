@@ -12,29 +12,39 @@ import {
   GridItem,
   useColorModeValue,
   Center,
-  Spinner,
   Button,
   Heading,
-  useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
 import { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import { SubNav } from "../components/SubNav";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { add } from "../slice/cartSlice";
-import { getProducts, STATUSES } from "../slice/productsSlice";
+import { getSearch, STATUSES } from "../slice/searchSlice";
 import { Rating } from "../components/Rating";
 
-export function Home() {
+export function Search() {
+  const { data: products, status } = useSelector((state) => state.search);
+  const { query } = useParams();
+  console.log(query);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getSearch(query));
+  }, [dispatch, query]);
 
-    const { data: products, status } = useSelector((state) => state.products);
-    const dispatch = useDispatch();
-    const toast = useToast();
+  console.log(products);
 
-    useEffect(() => {
-      dispatch(getProducts());
-    }, [dispatch]);
+  const handleAddToCart = (data) => {
+    dispatch(add(data));
+    toast({
+      title: "Item added",
+      status: "success",
+      duration: 1000,
+      isClosable: true,
+    });
+  };
 
   if (status === STATUSES.LOADING) {
     return (
@@ -54,31 +64,21 @@ export function Home() {
     );
   }
 
-  const handleAddToCart = (data) => {
-    dispatch(add(data));
-    toast({
-      title: "Item added",
-      status: "success",
-      duration: 1000,
-      isClosable: true,
-    });
-  };
-
   return (
     <>
       <SubNav />
-      <Box>
-        <Grid
-          templateColumns={{
-            xl: "repeat(4, 1fr)",
-            lg: "repeat(3, 1fr)",
-            md: "repeat(2, 1fr)",
-            sm: "repeat(1, 1fr)",
-          }}
-          gap={5}
-        >
-          {products ? (
-            products.map((data) => {
+      <Center w={"95%"} m={"20px auto"}>
+        {products.length !== 0 ? (
+          <Grid
+            templateColumns={{
+              xl: "repeat(4, 1fr)",
+              lg: "repeat(3, 1fr)",
+              md: "repeat(2, 1fr)",
+              sm: "repeat(1, 1fr)",
+            }}
+            gap={5}
+          >
+            {products?.map((data) => {
               return (
                 <GridItem
                   key={data.id}
@@ -88,8 +88,6 @@ export function Home() {
                   rounded="lg"
                   shadow="lg"
                   position="relative"
-                  w={"95%"}
-                  m={"20px auto"}
                 >
                   {true && (
                     <Circle
@@ -100,7 +98,6 @@ export function Home() {
                       bg="red.200"
                     />
                   )}
-
                   <Link to={`/products/${data.id}`}>
                     <Center p={8}>
                       <Image
@@ -113,7 +110,13 @@ export function Home() {
                   </Link>
 
                   <Box p="6">
-                    <Box d="flex" alignItems="baseline">
+                    <Box
+                      d="flex"
+                      alignItems="baseline"
+                      position="absolute"
+                      top={2}
+                      left={2}
+                    >
                       <Badge
                         position="absolute"
                         top={1}
@@ -137,7 +140,10 @@ export function Home() {
                     </Box>
 
                     <Flex justifyContent="space-between" alignContent="center">
-                      <Rating rating={data.rating} numReviews={data.stock} />
+                      <Rating
+                        rating={data.rating}
+                        numReviews={data.stock}
+                      />
                       <Box
                         fontSize="2xl"
                         color={useColorModeValue("gray.800", "white")}
@@ -162,7 +168,13 @@ export function Home() {
                             bg={"red.400"}
                             onClick={() => handleAddToCart(data)}
                           >
-                            <Icon as={FiShoppingCart} h={7} w={7} /> Add To Cart
+                            <Icon
+                              as={FiShoppingCart}
+                              h={7}
+                              w={7}
+                              // alignSelf={"center"}
+                            />{" "}
+                            Add To Cart
                           </Button>
                         </chakra.a>
                       </Tooltip>
@@ -170,15 +182,16 @@ export function Home() {
                   </Box>
                 </GridItem>
               );
-            })
-          ) : (
-            <Center>
-              <Spinner />
-              <Heading>Loading...</Heading>
-            </Center>
-          )}
-        </Grid>
-      </Box>
+            })}
+          </Grid>
+        ) : (
+          <Box h={"40vh"}>
+            <Heading p={10} textAlign={"center"}>
+              No result found with keyword "{query}"
+            </Heading>
+          </Box>
+        )}
+      </Center>
     </>
   );
 }

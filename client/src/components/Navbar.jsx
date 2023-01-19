@@ -13,15 +13,19 @@ import {
   MenuList,
   MenuItem,
   useToast,
+  Center,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon, SearchIcon } from "@chakra-ui/icons";
 import { AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import { useSelector } from "react-redux";
 
 export function Navbar() {
+  // const cart = JSON.parse(localStorage.getItem("cartLS")) || [];
   const userData = JSON.parse(localStorage.getItem("userDataLS")) || {};
+  const cart= useSelector((state)=>state.cart)
   const { colorMode, toggleColorMode } = useColorMode();
   const bg = useColorModeValue("blue.500", "gray.700");
   const color = useColorModeValue("white", "white");
@@ -38,7 +42,7 @@ export function Navbar() {
       isClosable: true,
     });
   };
-
+console.log(search)
   return (
     <>
       <Box bg={bg} color={color} px={4}>
@@ -71,7 +75,7 @@ export function Navbar() {
               bg={color}
               color={bg}
             />
-            <Link to={""}>
+            <Link to={`/search/${search}`}>
               {" "}
               <InputRightAddon
                 children={<SearchIcon />}
@@ -85,7 +89,9 @@ export function Navbar() {
               <Menu isLazy>
                 <MenuButton>{userData.firstName}</MenuButton>
                 <MenuList bg={color} color={bg}>
-                  <Button onClick={handleAuth}>Logout</Button>
+                  <Center>
+                    <Button onClick={handleAuth}>Logout</Button>
+                  </Center>
                 </MenuList>
               </Menu>
             ) : (
@@ -113,11 +119,12 @@ export function Navbar() {
               </Menu>
             )}
           </Box>
-          <Box>
-            <Link to={"/cart"}>
+          <Link to={"/cart"}>
+            <Flex>
               <AiOutlineShoppingCart size={30} />
-            </Link>
-          </Box>
+              <Box className="cartLength">{cart.length}</Box>
+            </Flex>
+          </Link>
           <Button onClick={toggleColorMode} bg={bg}>
             {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
           </Button>

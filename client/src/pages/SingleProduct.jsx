@@ -1,208 +1,152 @@
-import React from "react";
 import {
   Box,
-  Grid,
-  Circle,
-  Image,
-  Flex,
-  Tooltip,
-  Badge,
-  chakra,
-  Icon,
-  GridItem,
-  useColorModeValue,
-  Center,
-  Spinner,
-  Button,
+  Divider,
   Heading,
+  Flex,
+  Stack,
+  Card,
+  CardBody,
+  Image,
+  Text,
+  CardFooter,
+  Button,
+  Center,
+  useToast,
+  Badge,
 } from "@chakra-ui/react";
-import { BsStar, BsStarFill, BsStarHalf } from "react-icons/bs";
-import { FiShoppingCart } from "react-icons/fi";
-import { useState } from "react";
-import { useEffect } from "react";
-import axios from "axios";
-import { SubNav } from "../components/SubNav";
-import { useParams } from "react-router-dom";
-// import { Loading } from "./Loading";
-
-function Rating({ rating, numReviews }) {
-  return (
-    <Flex alignItems="center">
-      {Array(5)
-        .fill("")
-        .map((_, i) => {
-          const roundedRating = Math.round(rating * 2) / 2;
-          if (roundedRating - i >= 1) {
-            return (
-              <BsStarFill
-                key={i}
-                style={{ marginLeft: "1" }}
-                color={i < rating ? "teal.500" : "gray.300"}
-              />
-            );
-          }
-          if (roundedRating - i === 0.5) {
-            return <BsStarHalf key={i} style={{ marginLeft: "1" }} />;
-          }
-          return <BsStar key={i} style={{ marginLeft: "1" }} />;
-        })}
-      <Box as="span" ml="2" color="gray.600" fontSize="sm">
-        {numReviews} review{numReviews > 1 && "s"}
-      </Box>
-    </Flex>
-  );
-}
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import {
+  getSingleProducts,
+  STATUSES,
+} from "../slice/singleProductSlice";
+import { add } from "../slice/cartSlice";
+import { Rating } from "../components/Rating";
 
 export function SingleProduct() {
-  const [product, setProduct] = useState({});
-  const { id } = useParams();
-  const getProduct = () => {
-    axios
-      .get(`https://fakestoreapi.com/products/${id}`)
-      .then((res) => setProduct(res.data));
-  };
+  const categories = useSelector((state) => state.category);
+  const { data: product, status } = useSelector((state) => state.singleProduct);
+  const dispatch = useDispatch();
+  const toast = useToast();
+
+  let { id } = useParams();
+  console.log(id);
+
+
   useEffect(() => {
-    getProduct(id);
-  }, [id]);
-  console.log(product, id);
+    dispatch(getSingleProducts(id));
+  }, [dispatch, id]);
+
+  const handleAdd = (product) => {
+    dispatch(add(product));
+    toast({
+      title: "Added to cart",
+      position: "bottom-left",
+      status: "success",
+      duration: 1000,
+      isClosable: true,
+    });
+  };
+
+  // console.log(categories)
+
+  if (status === STATUSES.LOADING) {
+    return <h2>Loading....</h2>;
+  }
+
+  if (status === STATUSES.ERROR) {
+    return (
+      <div>
+        <h1>ERROR 404</h1>
+        <h2>Something went wrong!</h2>
+      </div>
+    );
+  }
   return (
-    <>
-      <SubNav />
-      <Box w={"95%"} m={"20px auto"}>
-        <Box
-          bg={useColorModeValue("white", "gray.800")}
-          borderWidth="1px"
-          rounded="lg"
-          shadow="lg"
-          position="relative"
-        >
-          {product.id == id ? (
-            <Flex
-              w={"100%"}
-              direction={{
-                xl: "row",
-                lg: "row",
-                md: "row",
-                sm: "column",
-                base: "column",
-              }}
-            >
-              {true && (
-                <Circle
-                  size="10px"
-                  position="absolute"
-                  top={2}
-                  right={2}
-                  bg="red.200"
-                />
-              )}
-
-              <Center
-                p={6}
-                w={{
-                  xl: "50%",
-                  lg: "50%",
-                  md: "50%",
-                  sm: "100%",
-                  base: "100%",
-                }}
-              >
-                <Image
-                  w={"50%"}
-                  src={product.image}
-                  alt={`Picture of ${product.title}`}
-                  rounded="lg"
-                />
-              </Center>
-
-              <Box
-                p="6"
-                w={{
-                  xl: "50%",
-                  lg: "50%",
-                  md: "50%",
-                  sm: "100%",
-                  base: "100%",
-                }}
-              >
-                <Box
-                  d="flex"
-                  alignItems="baseline"
-                  position="absolute"
-                  top={1}
-                  left={1}
-                >
-                  {product.rating.count < 220 && (
-                    <Badge
-                      zIndex={1}
-                      rounded="full"
-                      px="2"
-                      fontSize="0.8em"
-                      colorScheme="red"
-                    >
-                      New
-                    </Badge>
-                  )}
-                </Box>
-
-                <Box
-                  fontSize="2xl"
-                  fontWeight="semibold"
-                  as="h4"
-                  lineHeight="tight"
-                >
-                  {product.title}
-                </Box>
-
-                <Box
-                  fontSize="xl"
-                  fontWeight="normal"
-                  as="h4"
-                  lineHeight="tight"
-                >
-                  {product.description}
-                </Box>
-
-                <Flex justifyContent="space-between" alignContent="center">
-                  <Rating
-                    rating={product.rating.rate}
-                    numReviews={product.rating.count}
-                  />
-                  <Box
-                    fontSize="2xl"
-                    color={useColorModeValue("gray.800", "white")}
-                  >
-                    <Box as="span" color={"gray.600"} fontSize="lg">
-                      $
-                    </Box>
-                    {product.price.toFixed(2)}
-                  </Box>
+    <Box p={5}>
+      <Card>
+        <CardBody>
+          <Badge
+            position="absolute"
+            top={2}
+            right={2}
+            rounded="full"
+            px="2"
+            fontSize="1em"
+            colorScheme="red"
+          >
+            {product.discountPercentage}% OFF
+          </Badge>
+          <Flex justify={"space-between"} p={"10px"} gap={5}>
+            <Box>
+              <Image
+                src={product.thumbnail}
+                alt={product.title}
+                borderRadius="lg"
+                w={"300px"}
+                h={"300px"}
+              />
+            </Box>
+            <Stack>
+              <Heading size="lg">Brand: {product.brand}</Heading>
+              <Text fontSize={"xl"}>
+                <Heading as={"h4"} fontSize={"xl"} display={"inline-block"}>
+                  Title:
+                </Heading>{" "}
+                {product.title}
+              </Text>
+              <Text fontSize={"xl"}>
+                <Heading as={"h4"} fontSize={"xl"} display={"inline-block"}>
+                  Description:
+                </Heading>{" "}
+                {product.description}
+              </Text>
+              <Flex justify={"space-between"}>
+                <Text fontSize="xl">Price: ₹ {70 * product.price}</Text>
+                <Flex gap={2}>
+                  <Text fontSize="xl">Rating:</Text>
+                  <Rating rating={product.rating} />
                 </Flex>
-                <Center>
-                  <Tooltip
-                    label="Add to cart"
-                    bg="white"
-                    placement={"top"}
-                    color={"gray.800"}
-                    fontSize={"1.2em"}
-                  >
-                    <chakra.a href={"#"} display={"flex"}>
-                      <Button mt={5} bg={"red.400"}>
-                        <Icon as={FiShoppingCart} h={7} w={7} /> Add To Cart
-                      </Button>
-                    </chakra.a>
-                  </Tooltip>
-                </Center>
-              </Box>
+              </Flex>
+              <Center>
+                <Text fontSize="xl">
+                  {product.stock > 0 ? (
+                    <Text>In Stock</Text>
+                  ) : (
+                    <Text>Out of Stock</Text>
+                  )}
+                </Text>
+              </Center>
+            </Stack>
+          </Flex>
+          <Box p={"10px"}>
+            <Flex gap={5}>
+              {product?.images?.map((item) => {
+                return (
+                  <Image
+                    className="zoom"
+                    src={item}
+                    w={"150px"}
+                    h={"150px"}
+                    borderRadius={5}
+                  />
+                );
+              })}
             </Flex>
-          ) : (
-            <Center>
-              <Spinner />
-              <Heading>Loading...</Heading>
-            </Center>
-          )}
-        </Box>
-      </Box>
-    </>
+          </Box>
+        </CardBody>
+        <Divider />
+        <CardFooter>
+          <Button
+            onClick={() => handleAdd(product)}
+            variant="solid"
+            colorScheme="blue"
+          >
+            Add to cart
+          </Button>
+        </CardFooter>
+      </Card>
+    </Box>
   );
 }

@@ -1,12 +1,10 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   Grid,
   GridItem,
   Heading,
-  HStack,
   Image,
   Stack,
   Table,
@@ -22,19 +20,22 @@ import {
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { EmptyCart } from "./EmptyCart";
+import { remove } from "../slice/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export const Cart = () => {
-    const cart=JSON.parse(localStorage.getItem("cartLS"))||[];
+  const cart = useSelector((state) => state.cart);
   const toast = useToast();
+  const dispatch=useDispatch();
   const handleRemove = (productId) => {
-    toast({
-      title: "Item removed",
-      status: "success",
-      duration: 1000,
-      isClosable: true,
-    });
+    dispatch(remove(productId))
+  toast({
+    title: "Item removed",
+    status: "success",
+    duration: 1000,
+    isClosable: true,
+  });
   };
-
 
   return (
     <Box w={"95%"} m={"auto"}>
@@ -42,7 +43,16 @@ export const Cart = () => {
         {cart.length > 0 ? (
           <Box className="right">
             <Heading>Cart Items</Heading>
-            <Grid templateColumns={"repeat(3,1fr)"} p={5} gap={10}>
+            <Grid
+              templateColumns={{
+                xl: "repeat(4, 1fr)",
+                lg: "repeat(3, 1fr)",
+                md: "repeat(2, 1fr)",
+                sm: "repeat(1, 1fr)",
+              }}
+              p={5}
+              gap={10}
+            >
               {cart.map((product) => {
                 return (
                   <GridItem
@@ -52,28 +62,18 @@ export const Cart = () => {
                     p={5}
                   >
                     <Image
-                    p={8}
+                      p={8}
                       className="image"
-                      src={product.image}
+                      src={product.thumbnail}
                       alt={product.title}
                     />
                     <Heading fontSize="md">Title: {product.title}</Heading>
-                    <Heading fontSize={"md"}>
-                      Price: $ { product.price}
-                    </Heading>
+                    <Heading fontSize={"md"}>Price: $ {product.price}</Heading>
                     <Flex justify={"space-between"} align={"center"}>
                       <Flex>
-                        <Button
-                          bg={"blue.400"}
-                        >
-                          -
-                        </Button>
+                        <Button bg={"blue.400"}>-</Button>
                         <Text p={"5px"}>1</Text>
-                        <Button
-                          bg={"blue.400"}
-                        >
-                          +
-                        </Button>
+                        <Button bg={"blue.400"}>+</Button>
                       </Flex>
                       <Button
                         bg={"red.400"}
@@ -109,7 +109,7 @@ export const Cart = () => {
                               {/* <Button onClick={() => handleQty(-1)}>-</Button> */}
                               {/* </Flex> */}
                             </Td>
-                            <Td isNumeric>$ { product.price}</Td>
+                            <Td isNumeric>$ {product.price}</Td>
                           </Tr>
                         </Tbody>
                       );
@@ -125,6 +125,11 @@ export const Cart = () => {
                     }, 0)}
                   </Heading>
                 </Flex>
+                <Link to={"/checkout"}>
+                  <Button bg={"green.400"} color={"white"}>
+                    Checkout
+                  </Button>
+                </Link>
               </Box>
             </Box>
           </Box>

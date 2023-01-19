@@ -6,10 +6,10 @@ export function EmptyCart() {
   return (
     <Box w={"90%"} m={"auto"}>
       <VStack>
-        <Box p={5}>
+        <Box p={8}>
           <AiOutlineShoppingCart size={"300px"} />
         </Box>
-        <Heading>Your cart is currently empty.</Heading>
+        <Heading h={"30vh"}>Your cart is currently empty.</Heading>
       </VStack>
     </Box>
   );
