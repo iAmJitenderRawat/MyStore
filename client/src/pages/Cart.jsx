@@ -17,18 +17,26 @@ import {
   Tr,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { EmptyCart } from "./EmptyCart";
-import { remove } from "../slice/cartSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useCart } from "react-use-cart";
 
 export const Cart = () => {
-  const cart = useSelector((state) => state.cart);
+   const {
+     isEmpty,
+     cartTotal,
+     totalUniqueItems,
+     items,
+     updateItemQuantity,
+     removeItem,
+     emptyCart,
+   } = useCart();
+   console.log("items",items)
   const toast = useToast();
-  const dispatch=useDispatch();
+
   const handleRemove = (productId) => {
-    dispatch(remove(productId))
+    removeItem(productId)
   toast({
     title: "Item removed",
     status: "success",
@@ -40,7 +48,7 @@ export const Cart = () => {
   return (
     <Box w={"95%"} m={"auto"}>
       <Stack p={2}>
-        {cart.length > 0 ? (
+        {items.length > 0 ? (
           <Box className="right">
             <Heading>Cart Items</Heading>
             <Grid
@@ -53,7 +61,7 @@ export const Cart = () => {
               p={5}
               gap={10}
             >
-              {cart.map((product) => {
+              {items.map((product) => {
                 return (
                   <GridItem
                     key={product.id}
@@ -71,9 +79,23 @@ export const Cart = () => {
                     <Heading fontSize={"md"}>Price: $ {product.price}</Heading>
                     <Flex justify={"space-between"} align={"center"}>
                       <Flex>
-                        <Button bg={"blue.400"}>-</Button>
-                        <Text p={"5px"}>1</Text>
-                        <Button bg={"blue.400"}>+</Button>
+                        <Button
+                          bg={"blue.400"}
+                          onClick={() =>
+                            updateItemQuantity(product.id, product.quantity - 1)
+                          }
+                        >
+                          -
+                        </Button>
+                        <Text p={"5px"}>{product.quantity}</Text>
+                        <Button
+                          bg={"blue.400"}
+                          onClick={() =>
+                            updateItemQuantity(product.id, product.quantity + 1)
+                          }
+                        >
+                          +
+                        </Button>
                       </Flex>
                       <Button
                         bg={"red.400"}
@@ -97,19 +119,17 @@ export const Cart = () => {
                         <Th isNumeric>Price</Th>
                       </Tr>
                     </Thead>
-                    {cart.map((product) => {
+                    {items.map((product) => {
                       return (
                         <Tbody key={product.id}>
                           <Tr>
                             <Td>{product.title}</Td>
                             <Td>
-                              {/* <Flex align={"center"}> */}
-                              {/* <Button onClick={() => handleQty(1)}>+</Button> */}
-                              <Text p={"5px"}>1</Text>
-                              {/* <Button onClick={() => handleQty(-1)}>-</Button> */}
-                              {/* </Flex> */}
+                              <Text p={"5px"}>{product.quantity}</Text>
                             </Td>
-                            <Td isNumeric>$ {product.price}</Td>
+                            <Td isNumeric>
+                              $ {product.quantity * product.price}
+                            </Td>
                           </Tr>
                         </Tbody>
                       );
@@ -120,9 +140,7 @@ export const Cart = () => {
                   <Heading mr={"30px"}>Grand Total:</Heading>
                   <Heading>
                     ${" "}
-                    {cart.reduce((acc, ele) => {
-                      return acc + ele.price;
-                    }, 0)}
+                    {cartTotal}
                   </Heading>
                 </Flex>
                 <Link to={"/checkout"}>

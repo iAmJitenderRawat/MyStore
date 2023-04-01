@@ -8,7 +8,7 @@ export function Footer() {
   console.log(year);
   
   return (
-    <Box bg={bg} color={color}>
+    <Box bg={bg} color={color} p={2}>
       <Center>
         <Text>Made with ❤️ by Jitender</Text>
       </Center>

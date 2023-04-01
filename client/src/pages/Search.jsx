@@ -21,11 +21,12 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { SubNav } from "../components/SubNav";
 import { useDispatch, useSelector } from "react-redux";
-import { add } from "../slice/cartSlice";
 import { getSearch, STATUSES } from "../slice/searchSlice";
 import { Rating } from "../components/Rating";
+import { useCart } from "react-use-cart";
 
 export function Search() {
+  const { addItem } = useCart();
   const { data: products, status } = useSelector((state) => state.search);
   const { query } = useParams();
   console.log(query);
@@ -37,7 +38,7 @@ export function Search() {
   console.log(products);
 
   const handleAddToCart = (data) => {
-    dispatch(add(data));
+    addItem(data);
     toast({
       title: "Item added",
       status: "success",

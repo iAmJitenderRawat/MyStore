@@ -16,15 +16,16 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   getSingleProducts,
   STATUSES,
 } from "../slice/singleProductSlice";
-import { add } from "../slice/cartSlice";
 import { Rating } from "../components/Rating";
+import { useCart } from "react-use-cart";
 
 export function SingleProduct() {
+  const { addItem } = useCart();
   const categories = useSelector((state) => state.category);
   const { data: product, status } = useSelector((state) => state.singleProduct);
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ export function SingleProduct() {
   }, [dispatch, id]);
 
   const handleAdd = (product) => {
-    dispatch(add(product));
+    addItem(product);
     toast({
       title: "Added to cart",
       position: "bottom-left",

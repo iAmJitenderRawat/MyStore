@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import {
   Box,
   Grid,
@@ -18,30 +18,34 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
-import { useEffect } from "react";
 import { SubNav } from "../components/SubNav";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { add } from "../slice/cartSlice";
 import { getProducts, STATUSES } from "../slice/productsSlice";
 import { Rating } from "../components/Rating";
+import { useCart } from "react-use-cart";
+import { AuthContext } from "../components/AuthContext";
 
 export function Home() {
+  const { addItem } = useCart();
+  // console.log(addItem);
+  const { data: products, status } = useSelector((state) => state.products);
+  const dispatch = useDispatch();
+  const toast = useToast();
+  const { sortName, sortPrice } = useContext(AuthContext);
 
-    const { data: products, status } = useSelector((state) => state.products);
-    const dispatch = useDispatch();
-    const toast = useToast();
-
-    useEffect(() => {
-      dispatch(getProducts());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch]);
 
   if (status === STATUSES.LOADING) {
     return (
-      <Heading textAlign={"center"} p={"20px 20%"}>
-        <Spinner boxSize={"xl"} />
-        Loading....
-      </Heading>
+      <Flex justifyContent={"center"} m={"300px 0"}>
+        <Heading textAlign={"center"}>
+          <Spinner />
+          Loading....
+        </Heading>
+      </Flex>
     );
   }
 
@@ -55,7 +59,7 @@ export function Home() {
   }
 
   const handleAddToCart = (data) => {
-    dispatch(add(data));
+    addItem(data);
     toast({
       title: "Item added",
       status: "success",
@@ -156,7 +160,7 @@ export function Home() {
                         color={"gray.800"}
                         fontSize={"1.2em"}
                       >
-                        <chakra.a display={"flex"}>
+                        <chakra.a display={"flex"} key={data.id}>
                           <Button
                             mt={5}
                             bg={"red.400"}

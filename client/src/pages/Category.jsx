@@ -17,18 +17,19 @@ import {
   Select,
   Heading,
   Spinner,
+  useToast,
 } from "@chakra-ui/react";
-import { BsStar, BsStarFill, BsStarHalf } from "react-icons/bs";
 import { FiShoppingCart } from "react-icons/fi";
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { SubNav } from "../components/SubNav";
 import { useDispatch, useSelector } from "react-redux";
-import { add } from "../slice/cartSlice";
 import { getCategoriesProducts, STATUSES } from "../slice/categoryProductsSlice";
 import { Rating } from "../components/Rating";
+import { useCart } from "react-use-cart";
 
 export function Category() {
+  const { addItem } = useCart();
   const {data: products, status} = useSelector((state) => state.categoryProducts);
   const { page } = useParams();
   console.log(page);
@@ -38,9 +39,9 @@ export function Category() {
   }, [dispatch, page]);
 
   console.log(products);
-
+const toast = useToast();
   const handleAddToCart = (data) => {
-    dispatch(add(data));
+    addItem(data);
     toast({
       title: "Item added",
       status: "success",
@@ -51,10 +52,12 @@ export function Category() {
 
     if (status === STATUSES.LOADING) {
       return (
-        <Heading textAlign={"center"} p={"20px 20%"}>
-          <Spinner boxSize={"xl"} />
-          Loading....
-        </Heading>
+        <Flex justifyContent={"center"} m={"300px 0"}>
+          <Heading textAlign={"center"}>
+            <Spinner />
+            Loading....
+          </Heading>
+        </Flex>
       );
     }
 

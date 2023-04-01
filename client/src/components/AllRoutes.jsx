@@ -1,14 +1,14 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import { Cart } from '../pages/Cart';
-import { Category } from '../pages/Category';
-import { Checkout } from '../pages/Checkout';
-import { Home } from '../pages/Home'
-import { Search } from '../pages/Search';
-import { SignIn } from '../pages/SignIn';
-import { SignUp } from '../pages/SignUp';
-import { SingleProduct } from '../pages/SingleProduct';
-import { PrivateRoute } from './PrivateRoute';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import { Cart } from "../pages/Cart";
+import { Category } from "../pages/Category";
+import { Checkout } from "../pages/Checkout";
+import { Home } from "../pages/Home";
+import { Search } from "../pages/Search";
+import { SignIn } from "../pages/SignIn";
+import { SignUp } from "../pages/SignUp";
+import { SingleProduct } from "../pages/SingleProduct";
+import { PrivateRoute } from "./PrivateRoute";
 
 export function AllRoutes() {
   return (

@@ -5,31 +5,33 @@ import {
   Divider,
   Flex,
   FormControl,
-  FormLabel,
   Heading,
-  HStack,
   Image,
   Input,
   InputGroup,
-  InputLeftAddon,
   InputLeftElement,
   InputRightAddon,
   Text,
   useToast,
-  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { AiTwotoneHome, AiOutlineCreditCard } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
-import { reset } from "../slice/cartSlice";
+import { Link } from "react-router-dom";
+import { useCart } from "react-use-cart";
 
 export function Checkout() {
-  const Cartproducts = useSelector((state) => state.cart);
-  const dispatch = useDispatch();
+  const {
+    isEmpty,
+    cartTotal,
+    totalUniqueItems,
+    items,
+    updateItemQuantity,
+    removeItem,
+    emptyCart,
+    metadata,
+  } = useCart();
+
   const toast = useToast();
-  const total = Cartproducts.reduce((acc, ele) => {
-    return acc + ele.price;
-  }, 0);
   const handlePay = () => {
     setTimeout(() => {
       toast({
@@ -40,10 +42,10 @@ export function Checkout() {
         duration: 1000,
         isClosable: true,
       });
-      dispatch(reset());
+      emptyCart();
     }, 2000);
   };
-  console.log(Cartproducts);
+  
   return (
     <Box p={5}>
       <Heading textAlign={"center"}>Checkout</Heading>
@@ -53,7 +55,8 @@ export function Checkout() {
           flexDir={{ xl: "row", lg: "row", md: "column", sm: "column" }}
         >
           <FormControl w={{ xl: "49%", lg: "49%", md: "100%", sm: "100%" }}>
-            <Flex flexDirection={"column"} gap={5}>
+            <Heading textAlign={"center"}>Card & User Deails</Heading>
+            <Flex flexDirection={"column"} gap={5} p={5}>
               <Flex gap={5}>
                 <InputGroup>
                   <InputLeftElement children={<AiOutlineCreditCard />} />
@@ -76,19 +79,27 @@ export function Checkout() {
                 <Input placeholder={"Zip Code"} w={"15%"} />
               </Flex>
             </Flex>
+            <Link to={"/cart"}>
+              <Button m={"5"} bg={"red.400"} color={"white"}>
+                ← Back
+              </Button>
+            </Link>
           </FormControl>
           {/* <Divider orientation="vertical" w={"1%"} variant="solid" h={"full"} color={"red.900"} /> */}
-          <Box p={5} w={{ xl: "49%", lg: "49%", md: "100%", sm: "100%" }}>
+          <Box  w={{ xl: "49%", lg: "49%", md: "100%", sm: "100%" }}>
             <Heading textAlign={"center"}>Order Summary</Heading>
-            {Cartproducts
-              ? Cartproducts?.map((item) => {
+            {items
+              ? items?.map((item) => {
                   return (
                     <Box>
                       <Flex key={item.id} p={5} gap={5}>
                         <Image src={item.thumbnail} w={100} />
                         <Box>
                           <Text>{item.title}</Text>
-                          <Text>$ {item.price}</Text>
+                          <Text>
+                            {item.quantity} {"* $ "} {item.price} {"= $"}{" "}
+                            {item.quantity * item.price}
+                          </Text>
                         </Box>
                       </Flex>
                       <Divider orientation="horizontal" />
@@ -97,7 +108,7 @@ export function Checkout() {
                 })
               : null}
             <Heading>
-              {Cartproducts.length > 0 ? "Total: $" + " " + total : null}
+              {items.length > 0 ? "Total: $" + " " + cartTotal : null}
             </Heading>
             <Center p={5}>
               <Button

@@ -20,17 +20,15 @@ import { AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
-import { useSelector } from "react-redux";
+import { useCart } from "react-use-cart";
 
 export function Navbar() {
-  // const cart = JSON.parse(localStorage.getItem("cartLS")) || [];
+  const {items}=useCart();
   const userData = JSON.parse(localStorage.getItem("userDataLS")) || {};
-  const cart= useSelector((state)=>state.cart)
   const { colorMode, toggleColorMode } = useColorMode();
   const bg = useColorModeValue("blue.500", "gray.700");
   const color = useColorModeValue("white", "white");
-  const { auth, setAuth } = useContext(AuthContext);
-  const { search, setSearch } = useContext(AuthContext);
+  const { isAuth, setAuth, search, setSearch } = useContext(AuthContext);
   const toast = useToast();
   const handleAuth = () => {
     setAuth(false);
@@ -42,10 +40,10 @@ export function Navbar() {
       isClosable: true,
     });
   };
-console.log(search)
+console.log(userData.firstName)
   return (
     <>
-      <Box bg={bg} color={color} px={4}>
+      <Box bg={bg} color={color} p={4}>
         <Flex
           h={16}
           alignItems={"center"}
@@ -85,7 +83,7 @@ console.log(search)
             </Link>
           </InputGroup>
           <Box>
-            {auth ? (
+            {isAuth ? (
               <Menu isLazy>
                 <MenuButton>{userData.firstName}</MenuButton>
                 <MenuList bg={color} color={bg}>
@@ -122,7 +120,7 @@ console.log(search)
           <Link to={"/cart"}>
             <Flex>
               <AiOutlineShoppingCart size={30} />
-              <Box className="cartLength">{cart.length}</Box>
+              <Box className="cartLength">{items.length}</Box>
             </Flex>
           </Link>
           <Button onClick={toggleColorMode} bg={bg}>

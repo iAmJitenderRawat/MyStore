@@ -7,10 +7,11 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getCategories } from "../slice/categogiesSlice";
+import { AuthContext } from "./AuthContext";
 
 export function SubNav() {
   const categories = useSelector((state) => state.category.data);
@@ -21,7 +22,10 @@ export function SubNav() {
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
-
+  const { sortName, setSortName, sortPrice, setSortPrice } =
+    useContext(AuthContext);
+  // console.log(sortName);
+  // console.log(sortPrice);
   return (
     <>
       <Grid
@@ -34,12 +38,12 @@ export function SubNav() {
           base: "repeat(2, 1fr)",
         }}
         justify={"space-between"}
-        gap={5}
-        p={5}
+        gap={2}
+        m={2}
       >
         {categories?.map((items, i) => {
           return (
-            <Box key={i}>
+            <Box key={i} boxSizing="border-box">
               <Link to={`/category/${items}`}>
                 <Button bg={bg} color={color} w={"100%"}>
                   {items}
@@ -49,22 +53,42 @@ export function SubNav() {
           );
         })}
       </Grid>
-      <Flex justify={"space-evenly"}>
+
+      {/* <Flex
+        gap={2}
+        mx={3}
+        flexDir={{ md: "row", sm: "row", base: "column" }}
+        justify={"space-evenly"}
+      >
         <Flex align={"center"}>
           <Text>Sort By Name</Text>
-          <Select placeholder="Select option">
+          <Select
+            placeholder="Select option"
+            name="sortName"
+            onChange={(e) => setSortName(e.target.value)}
+          >
+            <option value="DEFAULT" disabled>
+              None
+            </option>
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
           </Select>
         </Flex>
         <Flex align={"center"}>
           <Text>Sort By Price</Text>
-          <Select placeholder="Select option">
+          <Select
+            placeholder="Select option"
+            name="sortPrice"
+            onChange={(e) => setSortPrice(e.target.value)}
+          >
+            <option value="DEFAULT" disabled>
+              None
+            </option>
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
           </Select>
         </Flex>
-      </Flex>
+      </Flex> */}
     </>
   );
 }
