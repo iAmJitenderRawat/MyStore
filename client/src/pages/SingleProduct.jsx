@@ -104,7 +104,7 @@ export function SingleProduct() {
                 {product.description}
               </Text>
               <Flex justify={"space-between"}>
-                <Text fontSize="xl">Price: ₹ {70 * product.price}</Text>
+                <Text fontSize="xl">Price: $ {(product.price)?.toFixed(2)}</Text>
                 <Flex gap={2}>
                   <Text fontSize="xl">Rating:</Text>
                   <Rating rating={product.rating} />
@@ -131,6 +131,7 @@ export function SingleProduct() {
                     w={"150px"}
                     h={"150px"}
                     borderRadius={5}
+                    loading="lazy"
                   />
                 );
               })}

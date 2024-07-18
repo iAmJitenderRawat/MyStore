@@ -25,13 +25,13 @@ import { useCart } from "react-use-cart";
 export function Navbar() {
   const {items}=useCart();
   const userData = JSON.parse(localStorage.getItem("userDataLS")) || {};
+  const isAuth = JSON.parse(localStorage.getItem("isAuth"));
   const { colorMode, toggleColorMode } = useColorMode();
   const bg = useColorModeValue("blue.500", "gray.700");
   const color = useColorModeValue("white", "white");
-  const { isAuth, setAuth, search, setSearch } = useContext(AuthContext);
+  const { search, setSearch } = useContext(AuthContext);
   const toast = useToast();
   const handleAuth = () => {
-    setAuth(false);
     toast({
       title: "LogOut Successfull",
       position: "top",
@@ -39,6 +39,7 @@ export function Navbar() {
       duration: 1000,
       isClosable: true,
     });
+    localStorage.setItem("isAuth", false);
   };
 console.log(userData.firstName)
   return (

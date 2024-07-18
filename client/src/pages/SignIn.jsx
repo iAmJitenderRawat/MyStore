@@ -14,12 +14,13 @@ import {
 } from "@chakra-ui/react";
 import { useContext } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
 
 export function SignIn() {
   const arrUsers = JSON.parse(localStorage.getItem("usersLS")) || [];
   const { isAuth, setAuth } = useContext(AuthContext);
+  const navigate=useNavigate();
   const toast = useToast();
   const [userData, setUserData] = useState({
     email: "",
@@ -33,7 +34,7 @@ export function SignIn() {
   
   const handleClick = () => {
     if (arrUsers.length > 0) {
-      arrUsers.forEach((element) => {
+      arrUsers.some((element) => {
         if (
           element.email === userData.email &&
           element.password === userData.password
@@ -45,20 +46,21 @@ export function SignIn() {
             duration: 1000,
             isClosable: true,
           });
-          localStorage.setItem("userDataLS", JSON.stringify(element));
+          // localStorage.setItem("userDataLS", JSON.stringify(element));
+          localStorage.setItem("isAuth", true);
           setAuth(true);
-          console.log(isAuth);
+          navigate("/cart");
         }
-        // else {
-        //   toast({
-        //     title: "Login Failed",
-        //     description: "Wrong email or password.",
-        //     position: "top",
-        //     status: "error",
-        //     duration: 1000,
-        //     isClosable: true,
-        //   });
-        // }
+        else {
+          toast({
+            title: "Login Failed",
+            description: "Wrong email or password.",
+            position: "top",
+            status: "error",
+            duration: 1000,
+            isClosable: true,
+          });
+        }
       });
     } else {
       toast({
@@ -118,7 +120,7 @@ export function SignIn() {
                   bg: "blue.500",
                 }}
               >
-                <Link to={"/cart"}>Sign In</Link>
+                Sign In
               </Button>
             </Stack>
           </Stack>

@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { AiTwotoneHome, AiOutlineCreditCard } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "react-use-cart";
 
 export function Checkout() {
@@ -31,6 +31,7 @@ export function Checkout() {
     metadata,
   } = useCart();
 
+  const navigate=useNavigate();
   const toast = useToast();
   const handlePay = () => {
     setTimeout(() => {
@@ -44,6 +45,9 @@ export function Checkout() {
       });
       emptyCart();
     }, 2000);
+    setTimeout(()=>{
+      navigate("/");
+    },3000)
   };
   
   return (

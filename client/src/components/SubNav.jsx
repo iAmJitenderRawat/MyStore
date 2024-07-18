@@ -44,9 +44,9 @@ export function SubNav() {
         {categories?.map((items, i) => {
           return (
             <Box key={i} boxSizing="border-box">
-              <Link to={`/category/${items}`}>
+              <Link to={`/category/${items.slug}`}>
                 <Button bg={bg} color={color} w={"100%"}>
-                  {items}
+                  {items.name}
                 </Button>
               </Link>
             </Box>
